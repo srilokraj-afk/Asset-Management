@@ -1,0 +1,1 @@
+package com.enfec.one.asset.notification; import org.springframework.data.jpa.repository.JpaRepository; import java.util.*; public interface NotificationRepository extends JpaRepository<Notification,UUID>{List<Notification> findByUsernameOrderByCreatedAtDesc(String username);}

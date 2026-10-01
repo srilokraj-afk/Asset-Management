@@ -1,0 +1,1 @@
+package com.enfec.one.asset.workflow; import org.springframework.data.jpa.repository.JpaRepository; import java.util.*; public interface MaintenanceTicketRepository extends JpaRepository<MaintenanceTicket,UUID>{List<MaintenanceTicket> findAllByOrderByCreatedAtDesc();}

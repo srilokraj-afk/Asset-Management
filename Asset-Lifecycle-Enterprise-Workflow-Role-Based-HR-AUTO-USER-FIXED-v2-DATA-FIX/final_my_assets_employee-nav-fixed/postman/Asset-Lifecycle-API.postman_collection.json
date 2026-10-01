@@ -1,0 +1,682 @@
+{
+  "info": {
+    "name": "Asset Lifecycle M18-F02 - Complete API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8085"
+    },
+    {
+      "key": "sessionId",
+      "value": ""
+    },
+    {
+      "key": "assetId",
+      "value": ""
+    },
+    {
+      "key": "requestId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Auth - Admin Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const j=pm.response.json(); pm.collectionVariables.set('sessionId',j.sessionId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Auth - Employee Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"ravi\",\n  \"password\": \"ravi123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        }
+      }
+    },
+    {
+      "name": "03 Get Supported Statuses",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/assets/statuses",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "assets",
+            "statuses"
+          ]
+        }
+      }
+    },
+    {
+      "name": "04 Create Asset",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assetTag\": \"LAP-POSTMAN-001\",\n  \"type\": \"LAPTOP\",\n  \"make\": \"Dell\",\n  \"model\": \"Latitude 5440\",\n  \"serialNumber\": \"SN-POSTMAN-001\",\n  \"purchaseDate\": \"2026-09-27\",\n  \"warrantyExpiry\": \"2029-09-27\",\n  \"costMinor\": 75000,\n  \"currency\": \"USD\",\n  \"condition\": \"NEW\",\n  \"notes\": \"Created from Postman\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/assets",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "assets"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const j=pm.response.json(); pm.collectionVariables.set('assetId',j.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 List Assets",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/assets",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "assets"
+          ]
+        }
+      }
+    },
+    {
+      "name": "06 Employee Create Asset Request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}",
+            "description": "Use an employee session for this request"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"assetType\": \"LAPTOP\",\n  \"reason\": \"Need a laptop for project work\",\n  \"priority\": \"HIGH\",\n  \"requiredDate\": \"2026-10-01\",\n  \"comments\": \"Please assign when available\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/asset-requests",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "asset-requests"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const j=pm.response.json(); pm.collectionVariables.set('requestId',j.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Employee My Requests",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/asset-requests/my",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "asset-requests",
+            "my"
+          ]
+        }
+      }
+    },
+    {
+      "name": "08 Admin All Requests",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/asset-requests",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "asset-requests"
+          ]
+        }
+      }
+    },
+    {
+      "name": "09 Admin Approve Request",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/asset-requests/{{requestId}}/approve",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "asset-requests",
+            "{{requestId}}",
+            "approve"
+          ]
+        }
+      }
+    },
+    {
+      "name": "10 Admin Reject Request",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"reason\": \"No suitable asset available\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/asset-requests/{{requestId}}/reject",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "asset-requests",
+            "{{requestId}}",
+            "reject"
+          ]
+        }
+      }
+    },
+    {
+      "name": "11 Update Status - Assigned",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"ASSIGNED\",\n  \"assignedTo\": \"Rahul Sharma\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/assets/{{assetId}}/status",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "assets",
+            "{{assetId}}",
+            "status"
+          ]
+        }
+      }
+    },
+    {
+      "name": "12 Update Status - In Repair",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"IN_REPAIR\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/assets/{{assetId}}/status",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "assets",
+            "{{assetId}}",
+            "status"
+          ]
+        }
+      }
+    },
+    {
+      "name": "13 Repair Notes",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"notes\": \"Keyboard replaced and device diagnostics completed.\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/assets/{{assetId}}/repair",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "assets",
+            "{{assetId}}",
+            "repair"
+          ]
+        }
+      }
+    },
+    {
+      "name": "14 Update Status - In Stock",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"IN_STOCK\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/assets/{{assetId}}/status",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "assets",
+            "{{assetId}}",
+            "status"
+          ]
+        }
+      }
+    },
+    {
+      "name": "15 Transfer Assigned Asset",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"employee\": \"Priya Reddy\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/assets/{{assetId}}/transfer",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "assets",
+            "{{assetId}}",
+            "transfer"
+          ]
+        }
+      }
+    },
+    {
+      "name": "16 Return Asset",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/assets/{{assetId}}/return",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "assets",
+            "{{assetId}}",
+            "return"
+          ]
+        }
+      }
+    },
+    {
+      "name": "17 Status History",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/assets/{{assetId}}/status-history",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "assets",
+            "{{assetId}}",
+            "status-history"
+          ]
+        }
+      }
+    },
+    {
+      "name": "18 Inventory & Analytics",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/assets/analytics",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "assets",
+            "analytics"
+          ]
+        },
+        "description": "Returns lifecycle totals plus quantity by asset type, quantity by brand/manufacturer, quantity by type + brand, purchase analytics, warranty analytics and low-stock alerts."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const j=pm.response.json(); pm.test('Analytics has inventory breakdowns', () => pm.expect(j).to.have.property('byType')); pm.test('Analytics has brand breakdowns', () => pm.expect(j).to.have.property('byMake')); pm.test('Analytics has purchase analytics', () => pm.expect(j).to.have.property('purchasedThisYear')); pm.test('Analytics has low-stock data', () => pm.expect(j).to.have.property('lowStock')); "
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "19 Warranty",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/assets/warranty",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "assets",
+            "warranty"
+          ]
+        }
+      }
+    },
+    {
+      "name": "20 Audit Log",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/audit",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "audit"
+          ]
+        }
+      }
+    },
+    {
+      "name": "21 Notifications",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/notifications",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "notifications"
+          ]
+        }
+      }
+    },
+    {
+      "name": "22 Invalid Status - Expected 400",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"BROKEN\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/assets/{{assetId}}/status",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "assets",
+            "{{assetId}}",
+            "status"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Delete Asset - Admin",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "X-Session-Id",
+            "value": "{{sessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/assets/{{assetId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "assets",
+            "{{assetId}}"
+          ]
+        },
+        "description": "Deletes an asset. Use an assetId created by the Create Asset request. Admin session required."
+      }
+    }
+  ]
+}

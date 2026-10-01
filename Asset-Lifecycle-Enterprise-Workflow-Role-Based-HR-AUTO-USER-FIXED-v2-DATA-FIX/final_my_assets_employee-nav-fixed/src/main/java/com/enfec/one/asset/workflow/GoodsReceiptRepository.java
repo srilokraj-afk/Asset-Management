@@ -1,0 +1,1 @@
+package com.enfec.one.asset.workflow; import org.springframework.data.jpa.repository.JpaRepository; import java.util.*; public interface GoodsReceiptRepository extends JpaRepository<GoodsReceipt,UUID>{Optional<GoodsReceipt> findByRequestId(UUID requestId);}

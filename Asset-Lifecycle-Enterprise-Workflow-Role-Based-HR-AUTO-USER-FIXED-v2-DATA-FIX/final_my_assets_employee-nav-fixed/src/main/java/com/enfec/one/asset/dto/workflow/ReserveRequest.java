@@ -1,0 +1,1 @@
+package com.enfec.one.asset.dto.workflow; import jakarta.validation.constraints.NotNull; import java.util.*; public record ReserveRequest(UUID assetId,List<UUID> assetIds) { public List<UUID> ids(){ if(assetIds!=null&&!assetIds.isEmpty()) return assetIds; if(assetId!=null) return List.of(assetId); return List.of(); } }

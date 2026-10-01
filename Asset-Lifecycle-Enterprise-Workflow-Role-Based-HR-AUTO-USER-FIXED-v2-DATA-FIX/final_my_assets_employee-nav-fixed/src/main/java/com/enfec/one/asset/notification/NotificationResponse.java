@@ -1,0 +1,1 @@
+package com.enfec.one.asset.notification; import java.time.*; import java.util.*; public record NotificationResponse(UUID id,String title,String message,boolean read,OffsetDateTime createdAt){public static NotificationResponse from(Notification n){return new NotificationResponse(n.getId(),n.getTitle(),n.getMessage(),n.isReadFlag(),n.getCreatedAt());}}

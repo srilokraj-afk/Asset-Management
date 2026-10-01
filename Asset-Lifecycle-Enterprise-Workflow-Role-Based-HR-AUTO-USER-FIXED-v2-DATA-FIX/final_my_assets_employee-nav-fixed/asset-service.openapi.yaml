@@ -1,0 +1,176 @@
+openapi: 3.0.3
+info:
+  title: Asset Lifecycle Status Service
+  version: 2.0.0
+  description: M18-F02 Asset Lifecycle Status Management with employee requests and admin approval.
+servers:
+  - url: http://localhost:8085
+components:
+  parameters:
+    Session:
+      in: header
+      name: X-Session-Id
+      required: true
+      schema: {type: string}
+  schemas:
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username: {type: string}
+        password: {type: string}
+    AssetRequestCreate:
+      type: object
+      required: [assetType, reason]
+      properties:
+        assetType: {type: string, example: LAPTOP}
+        reason: {type: string}
+        priority: {type: string, example: NORMAL}
+        requiredDate: {type: string, format: date}
+        comments: {type: string}
+    UpdateAssetStatusRequest:
+      type: object
+      required: [status]
+      properties:
+        status: {type: string, enum: [IN_STOCK, ASSIGNED, IN_REPAIR, RETIRED]}
+        assignedTo: {type: string}
+    TransferAssetRequest:
+      type: object
+      required: [employee]
+      properties:
+        employee: {type: string}
+    RepairRequest:
+      type: object
+      required: [notes]
+      properties:
+        notes: {type: string}
+paths:
+  /api/auth/login:
+    post:
+      summary: Sign in and receive a demo session id
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/LoginRequest'}}}
+      responses: {'200': {description: Login successful}}
+  /api/asset-requests:
+    get:
+      summary: Admin list of all asset requests
+      parameters: [{$ref: '#/components/parameters/Session'}]
+      responses: {'200': {description: Request list}}
+    post:
+      summary: Employee creates an asset request
+      parameters: [{$ref: '#/components/parameters/Session'}]
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/AssetRequestCreate'}}}
+      responses: {'200': {description: Created request}}
+  /api/asset-requests/my:
+    get:
+      summary: Employee request history
+      parameters: [{$ref: '#/components/parameters/Session'}]
+      responses: {'200': {description: Request list}}
+  /api/asset-requests/{id}/approve:
+    patch:
+      summary: Admin approves and automatically assigns a matching stock asset
+      parameters:
+        - {$ref: '#/components/parameters/Session'}
+        - {in: path, name: id, required: true, schema: {type: string, format: uuid}}
+      responses: {'200': {description: Approved request}}
+  /api/asset-requests/{id}/reject:
+    patch:
+      summary: Admin rejects a pending request
+      parameters:
+        - {$ref: '#/components/parameters/Session'}
+        - {in: path, name: id, required: true, schema: {type: string, format: uuid}}
+      responses: {'200': {description: Rejected request}}
+  /api/assets:
+    get:
+      summary: List all assets
+      parameters: [{$ref: '#/components/parameters/Session'}]
+      responses: {'200': {description: Asset list}}
+    post:
+      summary: Admin creates an asset
+      parameters: [{$ref: '#/components/parameters/Session'}]
+      responses: {'201': {description: Created asset}}
+  /api/assets/my:
+    get:
+      summary: Employee assigned assets
+      parameters: [{$ref: '#/components/parameters/Session'}]
+      responses: {'200': {description: Assigned assets}}
+  /api/assets/{id}:
+    get:
+      summary: Get one asset
+      parameters:
+        - {$ref: '#/components/parameters/Session'}
+        - {in: path, name: id, required: true, schema: {type: string, format: uuid}}
+      responses: {'200': {description: Asset details}, '404': {description: Asset not found}}
+    delete:
+      summary: Admin deletes an asset
+      parameters:
+        - {$ref: '#/components/parameters/Session'}
+        - {in: path, name: id, required: true, schema: {type: string, format: uuid}}
+      responses: {'204': {description: Asset deleted}, '404': {description: Asset not found}}
+  /api/assets/{id}/status:
+    patch:
+      summary: Admin changes lifecycle status
+      parameters:
+        - {$ref: '#/components/parameters/Session'}
+        - {in: path, name: id, required: true, schema: {type: string, format: uuid}}
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/UpdateAssetStatusRequest'}}}
+      responses: {'200': {description: Updated asset}}
+  /api/assets/{id}/return:
+    patch:
+      summary: Employee or admin returns an asset to stock
+      parameters:
+        - {$ref: '#/components/parameters/Session'}
+        - {in: path, name: id, required: true, schema: {type: string, format: uuid}}
+      responses: {'200': {description: Returned asset}}
+  /api/assets/{id}/transfer:
+    patch:
+      summary: Admin transfers an assigned asset
+      parameters:
+        - {$ref: '#/components/parameters/Session'}
+        - {in: path, name: id, required: true, schema: {type: string, format: uuid}}
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/TransferAssetRequest'}}}
+      responses: {'200': {description: Transferred asset}}
+  /api/assets/{id}/repair:
+    patch:
+      summary: Admin updates repair notes for an In Repair asset
+      parameters:
+        - {$ref: '#/components/parameters/Session'}
+        - {in: path, name: id, required: true, schema: {type: string, format: uuid}}
+      requestBody:
+        required: true
+        content: {application/json: {schema: {$ref: '#/components/schemas/RepairRequest'}}}
+      responses: {'200': {description: Updated repair details}}
+  /api/assets/{id}/status-history:
+    get:
+      summary: Lifecycle history for an asset
+      parameters:
+        - {$ref: '#/components/parameters/Session'}
+        - {in: path, name: id, required: true, schema: {type: string, format: uuid}}
+      responses: {'200': {description: Lifecycle events}}
+  /api/assets/analytics:
+    get:
+      summary: Admin asset analytics
+      parameters: [{$ref: '#/components/parameters/Session'}]
+      responses: {'200': {description: Analytics}}
+  /api/assets/warranty:
+    get:
+      summary: Admin warranty register
+      parameters: [{$ref: '#/components/parameters/Session'}]
+      responses: {'200': {description: Warranty assets}}
+  /api/audit:
+    get:
+      summary: Admin audit log
+      parameters: [{$ref: '#/components/parameters/Session'}]
+      responses: {'200': {description: Audit records}}
+  /api/notifications:
+    get:
+      summary: Current user's notifications
+      parameters: [{$ref: '#/components/parameters/Session'}]
+      responses: {'200': {description: Notification list}}

@@ -1,0 +1,1 @@
+package com.enfec.one.asset.dto.workflow; import jakarta.validation.constraints.NotNull; import jakarta.validation.constraints.NotBlank; import java.util.UUID; public record MaintenanceCreateRequest(@NotNull UUID assetId,@NotBlank String issueDescription) {}

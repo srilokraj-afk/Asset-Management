@@ -1,0 +1,2 @@
+package com.enfec.one.asset.audit; import com.enfec.one.asset.auth.SessionAuthService; import org.springframework.web.bind.annotation.*; import java.util.*;
+@RestController @RequestMapping("/api/audit") public class AuditController { private final AuditLogRepository repo; private final SessionAuthService auth; public AuditController(AuditLogRepository repo,SessionAuthService auth){this.repo=repo;this.auth=auth;} @GetMapping public List<AuditLog> all(@RequestHeader("X-Session-Id") String s){auth.requireRole(s,"ADMIN");return repo.findTop100ByOrderByCreatedAtDesc();} }
